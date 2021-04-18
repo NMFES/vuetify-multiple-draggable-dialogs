@@ -22,5 +22,9 @@
     "bugs": {
         "url": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs/issues"
     },
-    "homepage": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs#readme"
+    "homepage": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs#readme",
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "~4.4.4",
+        "babel-eslint": "^10.1.0"
+    }
 }
