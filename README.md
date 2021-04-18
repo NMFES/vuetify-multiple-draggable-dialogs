@@ -1,5 +1,6 @@
 # Introduction
 A mixin that gives ability to have multiple active draggable dialogs. Also it moves these dialogs to the screen center when window resized to make them visible.
+Inspired by https://github.com/vuetifyjs/vuetify/issues/4058
 
 # Quick start
 
