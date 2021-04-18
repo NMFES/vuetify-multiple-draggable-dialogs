@@ -1,6 +1,6 @@
 {
     "name": "vuetify-multiple-draggable-dialogs",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "A mixin that gives ability to have multiple active draggable dialogs",
     "main": "src/index.js",
     "scripts": {

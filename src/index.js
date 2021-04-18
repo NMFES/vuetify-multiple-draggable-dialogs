@@ -26,6 +26,11 @@ function closestDialog(event) {
 function makeDialogAbove(event) {
     const wrappers = document.querySelectorAll(wrappersSelector);
     const activeWrapper = event.target.closest(wrappersSelector);
+    // if we clicked on non-related element
+    if (!activeWrapper) {
+        return false;
+    }
+
     // list of all z-indexes of wrappers
     let indexes = [];
     // collect all the indexes
@@ -50,18 +55,21 @@ function makeDialogAbove(event) {
 /**
  * Assign main styles
  * @param event
- * @param dialog
  */
-function setStyles(event, dialog) {
-    container.el = dialog;
-    container.mouseStartX = event.clientX;
-    container.mouseStartY = event.clientY;
-    container.elStartX = container.el.getBoundingClientRect().left;
-    container.elStartY = container.el.getBoundingClientRect().top;
-    container.el.style.position = 'fixed';
-    container.el.style.margin = '0px';
-    container.oldTransition = container.el.style.transition;
-    container.el.style.transition = 'none';
+function setStyles(event) {
+    const dialog = closestDialog(event);
+
+    if (dialog) {
+        container.el = dialog;
+        container.mouseStartX = event.clientX;
+        container.mouseStartY = event.clientY;
+        container.elStartX = container.el.getBoundingClientRect().left;
+        container.elStartY = container.el.getBoundingClientRect().top;
+        container.el.style.position = 'fixed';
+        container.el.style.margin = '0px';
+        container.oldTransition = container.el.style.transition;
+        container.el.style.transition = 'none';
+    }
 }
 
 /**
@@ -129,12 +137,8 @@ module.exports = {
     methods: {
         activateMultipleDraggableDialogs() {
             document.addEventListener('mousedown', (event) => {
-                const dialog = closestDialog(event);
-
-                if (dialog) {
-                    makeDialogAbove(event);
-                    setStyles(event, dialog);
-                }
+                makeDialogAbove(event);
+                setStyles(event);
             });
 
             document.addEventListener('mousemove', (event) => {
