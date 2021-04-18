@@ -36,3 +36,5 @@ export default {
 </script>
 
 ```
+
+![DEMO](https://github.com/NMFES/vuetify-multiple-draggable-dialogs/blob/master/demo.gif?raw=true)
