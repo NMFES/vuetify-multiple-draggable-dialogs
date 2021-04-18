@@ -1,0 +1,26 @@
+{
+    "name": "vuetify-multiple-draggable-dialogs",
+    "version": "1.0.0",
+    "description": "Extension that gives ability to have multiple active draggable dialogs",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NMFES/vuetify-multiple-draggable-dialogs.git"
+    },
+    "keywords": [
+        "js",
+        "vuetify",
+        "draggable",
+        "dialog",
+        "multiple"
+    ],
+    "author": "NMFES",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs/issues"
+    },
+    "homepage": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs#readme"
+}
