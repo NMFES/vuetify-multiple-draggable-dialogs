@@ -1,8 +1,8 @@
 {
     "name": "vuetify-multiple-draggable-dialogs",
-    "version": "1.0.0",
-    "description": "Extension that gives ability to have multiple active draggable dialogs",
-    "main": "index.js",
+    "version": "1.1.0",
+    "description": "A mixin that gives ability to have multiple active draggable dialogs",
+    "main": "src/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -22,9 +22,5 @@
     "bugs": {
         "url": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs/issues"
     },
-    "homepage": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs#readme",
-    "devDependencies": {
-        "@vue/cli-plugin-babel": "~4.4.4",
-        "babel-eslint": "^10.1.0"
-    }
+    "homepage": "https://github.com/NMFES/vuetify-multiple-draggable-dialogs#readme"
 }

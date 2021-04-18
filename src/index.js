@@ -1,74 +1,153 @@
-export default {
+const container = {};
+const wrappersSelector = '.v-dialog__content.v-dialog__content--active';
+const dialogSelector = '.v-dialog.v-dialog--active';
+
+/**
+ * Find the closest dialog
+ * @param event
+ */
+function closestDialog(event) {
+    // check for left click
+    if (event.button !== 0) {
+        return;
+    }
+    // if must contain needed class
+    if (!event.target.classList.contains('v-card__title')) {
+        return;
+    }
+
+    return event.target.closest(dialogSelector);
+}
+
+/**
+ * Make current dialog above the rest by switching their z-indexes
+ * @param event
+ */
+function makeDialogAbove(event) {
+    const wrappers = document.querySelectorAll(wrappersSelector);
+    const activeWrapper = event.target.closest(wrappersSelector);
+    // list of all z-indexes of wrappers
+    let indexes = [];
+    // collect all the indexes
+    wrappers.forEach((element) => {
+        indexes.push(parseInt(element.style.zIndex));
+    });
+
+    const maxIndex = Math.max(...indexes);
+    const currentIndex = parseInt(activeWrapper.style.zIndex);
+    // if z-index of current active dialog is less than we will switch them
+    // to make this dialog above the rest
+    if (currentIndex < maxIndex) {
+        wrappers.forEach((element) => {
+            if (parseInt(element.style.zIndex) === maxIndex) {
+                element.style.zIndex = currentIndex.toString();
+                activeWrapper.style.zIndex = maxIndex.toString();
+            }
+        });
+    }
+}
+
+/**
+ * Assign main styles
+ * @param event
+ * @param dialog
+ */
+function setStyles(event, dialog) {
+    container.el = dialog;
+    container.mouseStartX = event.clientX;
+    container.mouseStartY = event.clientY;
+    container.elStartX = container.el.getBoundingClientRect().left;
+    container.elStartY = container.el.getBoundingClientRect().top;
+    container.el.style.position = 'fixed';
+    container.el.style.margin = '0px';
+    container.oldTransition = container.el.style.transition;
+    container.el.style.transition = 'none';
+}
+
+/**
+ * Prevent out of bounds
+ */
+function alignDialog() {
+    const dialog = document.querySelector(dialogSelector);
+    if (dialog === null) return;
+
+    const styleLeft = parseInt(dialog.style.left);
+    const styleTop = parseInt(dialog.style.top);
+    const boundingWidth = dialog.getBoundingClientRect().width;
+    const boundingHeight = dialog.getBoundingClientRect().height;
+
+    const left = Math.min(styleLeft, window.innerWidth - boundingWidth);
+    const top = Math.min(styleTop, window.innerHeight - boundingHeight);
+
+    let borderLeft = 0;
+    let borderTop = 0;
+
+    // we need to add some borders to center the dialog once the window has resized
+    if (styleLeft > window.innerWidth) {
+        borderLeft = left / 2;
+    }
+
+    if (styleTop + boundingHeight > window.innerHeight) {
+        borderTop = (window.innerHeight - boundingHeight) / 2;
+    }
+
+    dialog.style.left = (left - borderLeft) + 'px';
+    dialog.style.top = (top - borderTop) + 'px';
+}
+
+
+/**
+ * Move the dialog by mouse cursor
+ * @param event
+ */
+function moveDialog(event) {
+    if (container.el) {
+        container.el.style.left = Math.min(
+            Math.max(container.elStartX + event.clientX - container.mouseStartX, 0),
+            window.innerWidth - container.el.getBoundingClientRect().width
+        ) + 'px';
+
+        container.el.style.top = Math.min(
+            Math.max(container.elStartY + event.clientY - container.mouseStartY, 0),
+            window.innerHeight - container.el.getBoundingClientRect().height
+        ) + 'px';
+    }
+}
+
+/**
+ * Return the initial transition
+ * @param event
+ */
+function setTransitionBack(event) {
+    if (container.el) {
+        container.el.style.transition = container.oldTransition;
+        container.el = undefined;
+    }
+}
+
+module.exports = {
     methods: {
-        multipleDraggableDialogs() {
-            (function () { // make vuetify dialogs movable
-                const d = {};
-                document.addEventListener("mousedown", e => {
-                    const closestDialog = e.target.closest(".v-dialog.v-dialog--active");
+        activateMultipleDraggableDialogs() {
+            document.addEventListener('mousedown', (event) => {
+                const dialog = closestDialog(event);
 
+                if (dialog) {
+                    makeDialogAbove(event);
+                    setStyles(event, dialog);
+                }
+            });
 
-                    const content = e.target.closest('.v-dialog__content.v-dialog__content--active');
-                    const elements = document.querySelectorAll(".v-dialog__content.v-dialog__content--active");
-                    const main = e.target.closest(".v-dialog__content.v-dialog__content--active");
-                    let indexes = [];
+            document.addEventListener('mousemove', (event) => {
+                moveDialog(event);
+            });
 
-                    elements.forEach((el) => {
-                        indexes.push(parseInt(el.style.zIndex));
-                    });
+            document.addEventListener('mouseup', (event) => {
+                setTransitionBack(event);
+            });
 
-                    const maxIndex = Math.max(...indexes);
-                    const currentIndex = parseInt(main.style.zIndex);
-
-                    if (currentIndex < maxIndex) {
-                        elements.forEach((el) => {
-                            if (parseInt(el.style.zIndex) === maxIndex) {
-                                el.style.zIndex = currentIndex;
-                                main.style.zIndex = maxIndex;
-                            }
-                        });
-                    }
-
-                    // for (let i in elements.entries()) {
-                    //     let zIndex = parseInt(elements[i].styles);
-                    //     console.log(elements[i].styles);
-                    // }
-
-                    if (e.button === 0 && closestDialog != null && e.target.classList.contains("v-card__title")) { // element which can be used to move element
-                        d.el = closestDialog; // element which should be moved
-                        d.mouseStartX = e.clientX;
-                        d.mouseStartY = e.clientY;
-                        d.elStartX = d.el.getBoundingClientRect().left;
-                        d.elStartY = d.el.getBoundingClientRect().top;
-                        d.el.style.position = "fixed";
-                        d.el.style.margin = 0;
-                        d.oldTransition = d.el.style.transition;
-                        d.el.style.transition = "none"
-                        // d.el.style.zIndex = 1000;
-                    }
-                });
-                document.addEventListener("mousemove", e => {
-                    if (d.el === undefined) return;
-                    d.el.style.left = Math.min(
-                        Math.max(d.elStartX + e.clientX - d.mouseStartX, 0),
-                        window.innerWidth - d.el.getBoundingClientRect().width
-                    ) + "px";
-                    d.el.style.top = Math.min(
-                        Math.max(d.elStartY + e.clientY - d.mouseStartY, 0),
-                        window.innerHeight - d.el.getBoundingClientRect().height
-                    ) + "px";
-                });
-                document.addEventListener("mouseup", () => {
-                    if (d.el === undefined) return;
-                    d.el.style.transition = d.oldTransition;
-                    d.el = undefined
-                });
-                setInterval(() => { // prevent out of bounds
-                    const dialog = document.querySelector(".v-dialog.v-dialog--active");
-                    if (dialog === null) return;
-                    dialog.style.left = Math.min(parseInt(dialog.style.left), window.innerWidth - dialog.getBoundingClientRect().width) + "px";
-                    dialog.style.top = Math.min(parseInt(dialog.style.top), window.innerHeight - dialog.getBoundingClientRect().height) + "px";
-                }, 100);
-            })();
+            setInterval(() => {
+                alignDialog();
+            }, 500);
         }
-    },
+    }
 };
