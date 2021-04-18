@@ -1,5 +1,5 @@
 # Introduction
-A mixin that gives ability to have multiple active draggable dialogs
+A mixin that gives ability to have multiple active draggable dialogs. Also it moves these dialogs to the screen center when window resized to make them visible.
 
 # Quick start
 
