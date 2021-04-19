@@ -11,12 +11,16 @@ function closestDialog(event) {
     if (event.button !== 0) {
         return;
     }
-    // if must contain needed class
-    if (!event.target.classList.contains('v-card__title')) {
-        return;
-    }
 
-    return event.target.closest(dialogSelector);
+    let dialog;
+    // target must contain one of provided classes
+    ['v-card__title', 'v-toolbar__content', 'v-toolbar__title'].forEach((className) => {
+        if (event.target.classList.contains(className)) {
+            dialog = event.target.closest(dialogSelector);
+        }
+    });
+
+    return dialog
 }
 
 /**
